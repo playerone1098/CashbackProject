@@ -7,6 +7,9 @@ require('dotenv').config();
 
 const app = express();
 
+// Required when behind a proxy (CRA dev server, nginx, etc.) so rate limiting uses the real client IP
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet());
 app.use(cors());

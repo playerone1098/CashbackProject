@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../utils/axios';
 
 export const Login = () => {
   const [formData, setFormData] = useState({
@@ -22,16 +23,35 @@ export const Login = () => {
     setLoading(true);
     setError('');
 
-    // Mock login - accept admin credentials
-    if (formData.email === 'admin@cashback.com' && formData.password === 'admin123') {
-      localStorage.setItem('adminToken', 'mock-token');
-      console.log('Login successful, token set');
-      navigate('/');
-    } else {
-      setError('Invalid credentials. Use admin@cashback.com / admin123');
-    }
+    try {
+      const response = await api.post('/auth/login', {
+        email: formData.email,
+        password: formData.password,
+      });
 
-    setLoading(false);
+      const { token, user } = response.data;
+
+      if (user.role !== 'admin') {
+        setError('Access denied. Admin account required.');
+        return;
+      }
+
+      localStorage.setItem('adminToken', token);
+      navigate('/');
+    } catch (err) {
+      if (!err.response) {
+        setError('Cannot reach the server. Make sure the backend is running (npm start in backend).');
+        return;
+      }
+      const data = err.response.data;
+      setError(
+        data.message ||
+        data.errors?.[0]?.msg ||
+        'Invalid credentials. Use admin@cashback.com / admin123'
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

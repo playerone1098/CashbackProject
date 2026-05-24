@@ -39,7 +39,7 @@ export const DealForm = () => {
     if (isEditing) {
       const fetchDeal = async () => {
         try {
-          const response = await axios.get(`/api/deals/${id}`);
+          const response = await api.get(`/deals/${id}`);
           const deal = response.data;
           setFormData({
             title: deal.title || '',
@@ -102,6 +102,9 @@ export const DealForm = () => {
     try {
       const submitData = {
         ...formData,
+        discountValue: Number(formData.discountValue) || 0,
+        originalPrice: Number(formData.originalPrice) || 0,
+        discountedPrice: Number(formData.discountedPrice) || 0,
         tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
         expiryDate: formData.expiryDate ? new Date(formData.expiryDate).toISOString() : null
       };

@@ -9,7 +9,7 @@ export const Deals = () => {
   useEffect(() => {
     const fetchDeals = async () => {
       try {
-        const response = await api.get('/admin/all/deals');
+        const response = await api.get('/deals/admin/all');
         setDeals(response.data.deals);
       } catch (error) {
         console.error('Error fetching deals:', error);

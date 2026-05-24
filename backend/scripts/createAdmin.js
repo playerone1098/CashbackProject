@@ -11,27 +11,27 @@ const createAdmin = async () => {
       useUnifiedTopology: true,
     });
 
-    // Check if admin already exists
-    const existingAdmin = await User.findOne({ email: 'admin@cashback.com' });
-    if (existingAdmin) {
-      console.log('Admin user already exists!');
-      process.exit(0);
+    let admin = await User.findOne({ email: 'admin@cashback.com' });
+
+    if (admin) {
+      admin.password = 'admin123';
+      admin.role = 'admin';
+      await admin.save();
+      console.log('Admin user already existed — password reset to admin123');
+    } else {
+      admin = new User({
+        username: 'admin',
+        email: 'admin@cashback.com',
+        password: 'admin123',
+        role: 'admin',
+        profile: {
+          firstName: 'Admin',
+          lastName: 'User'
+        }
+      });
+      await admin.save();
+      console.log('Admin user created successfully!');
     }
-
-    // Create admin user
-    const admin = new User({
-      username: 'admin',
-      email: 'admin@cashback.com',
-      password: 'admin123',
-      role: 'admin',
-      profile: {
-        firstName: 'Admin',
-        lastName: 'User'
-      }
-    });
-
-    await admin.save();
-    console.log('Admin user created successfully!');
     console.log('Email: admin@cashback.com');
     console.log('Password: admin123');
     console.log('Please change the password after first login.');
