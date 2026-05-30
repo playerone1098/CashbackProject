@@ -30,11 +30,25 @@ mongoose.connect(process.env.MONGODB_URI, {
 .then(() => console.log('MongoDB connected'))
 .catch(err => console.error('MongoDB connection error:', err));
 
+// Status endpoint
+app.get('/api/status', (req, res) => {
+  const dbState = mongoose.connection.readyState;
+  let dbStatus = 'Setup Required';
+  if (dbState === 1) {
+    dbStatus = 'Connected';
+  } else if (dbState === 2) {
+    dbStatus = 'Connecting';
+  }
+  res.json({
+    backend: 'Connected',
+    database: dbStatus,
+    frontend: 'Running'
+  });
+});
+
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/deals', require('./routes/deals'));
-app.use('/api/users', require('./routes/users'));
-// Removed rewards route - now focusing on deal publishing
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

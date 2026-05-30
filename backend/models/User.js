@@ -21,28 +21,14 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['user', 'admin'],
-    default: 'user'
+    enum: ['admin'],
+    default: 'admin'
   },
   profile: {
     firstName: String,
     lastName: String,
     phone: String,
     address: String
-  },
-  earnings: {
-    totalCashback: {
-      type: Number,
-      default: 0
-    },
-    pendingCashback: {
-      type: Number,
-      default: 0
-    },
-    availableBalance: {
-      type: Number,
-      default: 0
-    }
   },
   isActive: {
     type: Boolean,

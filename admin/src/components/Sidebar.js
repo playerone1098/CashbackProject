@@ -7,7 +7,6 @@ export const Sidebar = () => {
   const menuItems = [
     { path: '/', icon: '📊', label: 'Dashboard' },
     { path: '/deals', icon: '🎯', label: 'Deals' },
-    { path: '/users', icon: '👥', label: 'Users' },
   ];
 
   const isActive = (path) => {

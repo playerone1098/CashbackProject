@@ -6,62 +6,6 @@ const { auth } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Register
-router.post('/register', [
-  body('username').isLength({ min: 3 }).withMessage('Username must be at least 3 characters'),
-  body('email').isEmail().withMessage('Please provide a valid email'),
-  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
-], async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { username, email, password, firstName, lastName, phone } = req.body;
-
-    // Check if user exists
-    const existingUser = await User.findOne({
-      $or: [{ email }, { username }]
-    });
-
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
-
-    // Create new user
-    const user = new User({
-      username,
-      email,
-      password,
-      profile: { firstName, lastName, phone }
-    });
-
-    await user.save();
-
-    // Generate token
-    const token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
-
-    res.status(201).json({
-      token,
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        profile: user.profile,
-        earnings: user.earnings
-      }
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-});
-
 // Login
 router.post('/login', [
   body('email').isEmail().withMessage('Please provide a valid email'),
@@ -79,6 +23,11 @@ router.post('/login', [
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    // Check if user is an admin
+    if (user.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied. Admin account required.' });
     }
 
     // Check password
@@ -101,8 +50,7 @@ router.post('/login', [
         username: user.username,
         email: user.email,
         role: user.role,
-        profile: user.profile,
-        earnings: user.earnings
+        profile: user.profile
       }
     });
   } catch (error) {
@@ -112,14 +60,16 @@ router.post('/login', [
 
 // Get current user
 router.get('/me', auth, async (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Access denied. Admin account required.' });
+  }
   res.json({
     user: {
       id: req.user._id,
       username: req.user.username,
       email: req.user.email,
       role: req.user.role,
-      profile: req.user.profile,
-      earnings: req.user.earnings
+      profile: req.user.profile
     }
   });
 });

@@ -1,19 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 
 export const DealDetail = () => {
   const { id } = useParams();
-  const { isAuthenticated, user } = useAuth();
   const [deal, setDeal] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [claiming, setClaiming] = useState(false);
-  const [showClaimForm, setShowClaimForm] = useState(false);
-  const [claimData, setClaimData] = useState({
-    purchaseDate: '',
-    transactionId: ''
-  });
 
   useEffect(() => {
     const fetchDeal = async () => {
@@ -30,36 +22,20 @@ export const DealDetail = () => {
     fetchDeal();
   }, [id]);
 
-  const handleClaim = async (e) => {
-    e.preventDefault();
-    if (!isAuthenticated) {
-      alert('Please login to claim this deal');
-      return;
+  const formatDiscount = (deal) => {
+    if (deal.discountType === 'percentage') {
+      return `${deal.discountValue}% OFF`;
     }
-
-    setClaiming(true);
-    try {
-      const response = await axios.post('/api/rewards/claim', {
-        dealId: id,
-        purchaseDate: claimData.purchaseDate,
-        transactionId: claimData.transactionId
-      });
-
-      alert('Cashback claimed successfully! It will be processed after confirmation.');
-      setShowClaimForm(false);
-      setClaimData({ purchaseDate: '', transactionId: '' });
-    } catch (error) {
-      alert(error.response?.data?.message || 'Failed to claim cashback');
-    } finally {
-      setClaiming(false);
+    if (deal.discountType === 'fixed') {
+      return `$${deal.discountValue} OFF`;
     }
-  };
-
-  const formatCashback = (deal) => {
-    if (deal.cashbackType === 'percentage') {
-      return `${deal.cashback}%`;
+    if (deal.discountType === 'free-shipping') {
+      return 'FREE SHIPPING';
     }
-    return `$${deal.cashback}`;
+    if (deal.discountType === 'buy-one-get-one') {
+      return 'BUY 1 GET 1';
+    }
+    return 'SPECIAL OFFER';
   };
 
   if (loading) {
@@ -93,7 +69,7 @@ export const DealDetail = () => {
             className="w-full h-96 object-cover"
           />
           <div className="absolute top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg text-lg font-semibold">
-            {formatCashback(deal)} Cashback
+            {formatDiscount(deal)}
           </div>
           {deal.featured && (
             <div className="absolute top-4 left-4 bg-purple-500 text-white px-4 py-2 rounded-lg text-lg font-semibold">
@@ -139,9 +115,9 @@ export const DealDetail = () => {
                     ${deal.originalPrice - deal.discountedPrice}
                   </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Cashback:</span>
-                  <span className="text-purple-600 font-semibold">{formatCashback(deal)}</span>
+                 <div className="flex justify-between">
+                  <span className="text-gray-600">Discount:</span>
+                  <span className="text-purple-600 font-semibold">{formatDiscount(deal)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Category:</span>
@@ -154,24 +130,20 @@ export const DealDetail = () => {
               </div>
             </div>
 
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">How to Get Cashback</h3>
+             <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">How to Save</h3>
               <ol className="space-y-2 text-gray-600">
                 <li className="flex">
                   <span className="font-semibold mr-2">1.</span>
-                  Click the "Claim Cashback" button below
+                  Copy the coupon code listed below (if available)
                 </li>
                 <li className="flex">
                   <span className="font-semibold mr-2">2.</span>
-                  Complete your purchase through our affiliate link
+                  Click "Visit Store" to open the store's website
                 </li>
                 <li className="flex">
                   <span className="font-semibold mr-2">3.</span>
-                  Submit your purchase details for verification
-                </li>
-                <li className="flex">
-                  <span className="font-semibold mr-2">4.</span>
-                  Receive cashback in your account after confirmation
+                  Apply the copied coupon code at checkout to enjoy your discount
                 </li>
               </ol>
             </div>
@@ -201,73 +173,18 @@ export const DealDetail = () => {
             </div>
           )}
 
-          <div className="border-t pt-8">
-            {!showClaimForm ? (
-              <div className="text-center">
-                <button
-                  onClick={() => setShowClaimForm(true)}
-                  className="bg-purple-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-purple-700"
-                >
-                  Claim Cashback
-                </button>
-                {!isAuthenticated && (
-                  <p className="text-gray-600 mt-4">
-                    <Link to="/login" className="text-purple-600 hover:text-purple-700">
-                      Login
-                    </Link>
-                    {' '}to claim this deal
-                  </p>
-                )}
-              </div>
-            ) : (
-              <form onSubmit={handleClaim} className="max-w-md mx-auto">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Claim Your Cashback</h3>
-                
-                <div className="mb-4">
-                  <label className="block text-gray-700 text-sm font-bold mb-2">
-                    Purchase Date
-                  </label>
-                  <input
-                    type="date"
-                    value={claimData.purchaseDate}
-                    onChange={(e) => setClaimData({...claimData, purchaseDate: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500"
-                    required
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <label className="block text-gray-700 text-sm font-bold mb-2">
-                    Transaction ID (Optional)
-                  </label>
-                  <input
-                    type="text"
-                    value={claimData.transactionId}
-                    onChange={(e) => setClaimData({...claimData, transactionId: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500"
-                    placeholder="Order confirmation number"
-                  />
-                </div>
-
-                <div className="flex space-x-4">
-                  <button
-                    type="submit"
-                    disabled={claiming}
-                    className="flex-1 bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 disabled:opacity-50"
-                  >
-                    {claiming ? 'Claiming...' : 'Submit Claim'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowClaimForm(false)}
-                    className="flex-1 bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
+          {deal.store.website && (
+            <div className="border-t pt-8 text-center">
+              <a
+                href={deal.store.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-purple-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-purple-700 transition-colors"
+              >
+                Go to Deal at {deal.store.name}
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </div>

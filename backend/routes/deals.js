@@ -85,6 +85,20 @@ router.get('/admin/all', adminAuth, async (req, res) => {
   }
 });
 
+// Get deal stats (public)
+router.get('/stats', async (req, res) => {
+  try {
+    const activeDeals = await Deal.countDocuments({ isActive: true });
+    const uniqueStores = await Deal.distinct('store.name', { isActive: true });
+    res.json({
+      activeDeals,
+      supportedStores: uniqueStores.length
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 // Get deal by ID
 router.get('/:id', async (req, res) => {
   try {
@@ -216,6 +230,10 @@ router.delete('/:id', adminAuth, async (req, res) => {
 router.get('/categories/list', async (req, res) => {
   try {
     const categories = await Deal.distinct('category');
+    if (!categories || categories.length === 0) {
+      // Fallback to standard categories if the database is empty/has no deals
+      return res.json(['shopping', 'food', 'travel', 'entertainment', 'electronics', 'fashion', 'health', 'other']);
+    }
     res.json(categories);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });

@@ -4,7 +4,6 @@ import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './pages/Dashboard';
 import { Login } from './pages/Login';
 import { Deals } from './pages/Deals';
-import { Users } from './pages/Users';
 import { DealForm } from './pages/DealForm';
 import { PrivateRoute } from './components/PrivateRoute';
 
@@ -38,13 +37,6 @@ function App() {
           <PrivateRoute>
             <Layout>
               <DealForm />
-            </Layout>
-          </PrivateRoute>
-        } />
-        <Route path="/users" element={
-          <PrivateRoute>
-            <Layout>
-              <Users />
             </Layout>
           </PrivateRoute>
         } />

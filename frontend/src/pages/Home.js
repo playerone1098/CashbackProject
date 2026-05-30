@@ -27,11 +27,20 @@ export const Home = () => {
     fetchData();
   }, []);
 
-  const formatCashback = (deal) => {
-    if (deal.cashbackType === 'percentage') {
-      return `${deal.cashback}%`;
+  const formatDiscount = (deal) => {
+    if (deal.discountType === 'percentage') {
+      return `${deal.discountValue}% OFF`;
     }
-    return `$${deal.cashback}`;
+    if (deal.discountType === 'fixed') {
+      return `$${deal.discountValue} OFF`;
+    }
+    if (deal.discountType === 'free-shipping') {
+      return 'FREE SHIPPING';
+    }
+    if (deal.discountType === 'buy-one-get-one') {
+      return 'BUY 1 GET 1';
+    }
+    return 'SPECIAL OFFER';
   };
 
   if (loading) {
@@ -43,7 +52,20 @@ export const Home = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <>
+      {/* Real-time Ticker Banner */}
+      <div className="bg-purple-600 text-white py-3 overflow-hidden relative shadow-sm w-full -mt-8 mb-8">
+        <div className="flex whitespace-nowrap animate-marquee">
+          <span className="inline-block text-sm font-semibold tracking-wide px-4">
+            ⚡ REAL-TIME UPDATES: Our dedicated team is continuously verifying and updating cashback offers and coupon codes hourly to guarantee you the absolute best chance of saving! Grab your favorite deals before they expire! &nbsp;&bull;&nbsp;
+          </span>
+          <span className="inline-block text-sm font-semibold tracking-wide px-4">
+            ⚡ REAL-TIME UPDATES: Our dedicated team is continuously verifying and updating cashback offers and coupon codes hourly to guarantee you the absolute best chance of saving! Grab your favorite deals before they expire! &nbsp;&bull;&nbsp;
+          </span>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Hero Section */}
       <section className="text-center py-16">
         <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
@@ -52,37 +74,13 @@ export const Home = () => {
         <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
           Discover amazing deals from your favorite brands and earn cashback rewards on every purchase
         </p>
-        <div className="space-x-4">
+        <div className="flex justify-center">
           <Link
             to="/deals"
-            className="bg-purple-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-purple-700"
+            className="bg-purple-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-purple-700 transition-colors"
           >
             Browse Deals
           </Link>
-          <Link
-            to="/register"
-            className="border border-purple-600 text-purple-600 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-purple-50"
-          >
-            Join Free
-          </Link>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-12 bg-purple-50 rounded-lg mb-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-          <div>
-            <div className="text-3xl font-bold text-purple-600">500+</div>
-            <div className="text-gray-600">Active Deals</div>
-          </div>
-          <div>
-            <div className="text-3xl font-bold text-purple-600">50K+</div>
-            <div className="text-gray-600">Happy Users</div>
-          </div>
-          <div>
-            <div className="text-3xl font-bold text-purple-600">$1M+</div>
-            <div className="text-gray-600">Cashback Paid</div>
-          </div>
         </div>
       </section>
 
@@ -122,7 +120,7 @@ export const Home = () => {
                   className="w-full h-48 object-cover"
                 />
                 <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded text-sm font-semibold">
-                  {formatCashback(deal)} Cashback
+                  {formatDiscount(deal)}
                 </div>
               </div>
               
@@ -162,24 +160,25 @@ export const Home = () => {
               <span className="text-2xl font-bold text-purple-600">1</span>
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">Browse Deals</h3>
-            <p className="text-gray-600">Find the best cashback deals from your favorite brands</p>
+            <p className="text-gray-600">Find the best deals and active coupons from your favorite brands</p>
           </div>
           <div className="text-center">
             <div className="bg-purple-100 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
               <span className="text-2xl font-bold text-purple-600">2</span>
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Shop & Earn</h3>
-            <p className="text-gray-600">Click through our links and make your purchase as usual</p>
+            <h3 className="font-semibold text-gray-900 mb-2">Copy Coupon Code</h3>
+            <p className="text-gray-600">Get immediate access to coupon codes and discount details</p>
           </div>
           <div className="text-center">
             <div className="bg-purple-100 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
               <span className="text-2xl font-bold text-purple-600">3</span>
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Get Cashback</h3>
-            <p className="text-gray-600">Receive cashback in your account after purchase confirmation</p>
+            <h3 className="font-semibold text-gray-900 mb-2">Shop & Save</h3>
+            <p className="text-gray-600">Apply the code at checkout to save money on your purchase</p>
           </div>
         </div>
       </section>
     </div>
-  );
+  </>
+);
 };
