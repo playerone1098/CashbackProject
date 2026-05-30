@@ -10,5 +10,5 @@ Disallow: /admin/
 Disallow: /login
 Disallow: /register
 
-# Reference dynamic sitemap served from host root
-Sitemap: http://localhost:5000/sitemap.xml
+# Reference dynamic sitemap (Replace with your actual production domain name, e.g. https://yoursite.com/sitemap.xml)
+Sitemap: https://yoursite.com/sitemap.xml
