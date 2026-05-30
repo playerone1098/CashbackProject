@@ -26,10 +26,12 @@ export const Footer = () => {
           <div>
             <h4 className="text-md font-semibold mb-4">Categories</h4>
             <ul className="space-y-2 text-sm">
-              <li><a href="/deals?category=shopping" className="text-gray-300 hover:text-white">Shopping</a></li>
-              <li><a href="/deals?category=food" className="text-gray-300 hover:text-white">Food & Dining</a></li>
-              <li><a href="/deals?category=travel" className="text-gray-300 hover:text-white">Travel</a></li>
-              <li><a href="/deals?category=electronics" className="text-gray-300 hover:text-white">Electronics</a></li>
+              <li><Link to="/deals?category=shopping" className="text-gray-300 hover:text-white">Shopping</Link></li>
+              <li><Link to="/deals?category=food" className="text-gray-300 hover:text-white">Food & Dining</Link></li>
+              <li><Link to="/deals?category=travel" className="text-gray-300 hover:text-white">Travel</Link></li>
+              <li><Link to="/deals?category=electronics" className="text-gray-300 hover:text-white">Electronics</Link></li>
+              <li><Link to="/deals?category=credit cards" className="text-gray-300 hover:text-white">Credit Cards</Link></li>
+              <li><Link to="/deals?category=upi apps" className="text-gray-300 hover:text-white">UPI & Wallet Apps</Link></li>
             </ul>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 
 export const FAQ = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -62,6 +63,14 @@ export const FAQ = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <Helmet>
+        <title>Frequently Asked Questions (FAQ) | Cashback Rewards Help</title>
+        <meta name="description" content="Find answers to common questions about earning cashback, verified coupon codes, rewards verification, monthly payout structures, account security, and more." />
+        <meta property="og:title" content="FAQ & Help Center" />
+        <meta property="og:description" content="Find answers to common questions about earning cashback, verified coupon codes, rewards verification, monthly payouts, and more." />
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href={window.location.origin + window.location.pathname} />
+      </Helmet>
       {/* Header */}
       <div className="text-center mb-12">
         <h1 className="text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">

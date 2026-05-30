@@ -17,7 +17,7 @@ const dealSchema = new mongoose.Schema({
   category: {
     type: String,
     required: true,
-    enum: ['shopping', 'food', 'travel', 'entertainment', 'electronics', 'fashion', 'health', 'other']
+    trim: true
   },
   store: {
     name: {
@@ -48,8 +48,7 @@ const dealSchema = new mongoose.Schema({
   imageUrl: String,
   affiliateLink: String,
   couponCode: {
-    type: String,
-    required: true
+    type: String
   },
   expiryDate: {
     type: Date,
@@ -73,7 +72,7 @@ const dealSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Index for search functionality
-dealSchema.index({ title: 'text', description: 'text', store: 'text' });
+// Index for search functionality (including tags for wider SEO & search discovery)
+dealSchema.index({ title: 'text', description: 'text', store: 'text', tags: 'text' });
 
 module.exports = mongoose.model('Deal', dealSchema);

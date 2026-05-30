@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
+import { Helmet } from 'react-helmet-async';
 
 export const Deals = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -12,6 +13,26 @@ export const Deals = () => {
   const category = searchParams.get('category');
   const search = searchParams.get('search');
   const page = parseInt(searchParams.get('page')) || 1;
+
+  const getSeoMetadata = () => {
+    let title = 'Latest Cashback Deals, Discounts & Promo Codes | Cashback';
+    let description = 'Browse all our verified cashback deals, card rewards, and active promo codes. Shop and save now!';
+
+    if (category && category !== 'all') {
+      const formattedCategory = category.charAt(0).toUpperCase() + category.slice(1);
+      title = `${formattedCategory} Cashback Deals & Active Coupon Codes | Cashback`;
+      description = `Find the best cashback rewards, discount offers, and coupon codes in the ${category} category. Save money on every purchase.`;
+    }
+
+    if (search) {
+      title = `Search Results for "${search}" | Cashback Deals`;
+      description = `Discover active coupon codes and cashback rewards matching your search for "${search}".`;
+    }
+
+    return { title, description };
+  };
+
+  const { title: seoTitle, description: seoDesc } = getSeoMetadata();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -89,16 +110,31 @@ export const Deals = () => {
     setSearchParams(params);
   };
 
+  const helmet = (
+    <Helmet>
+      <title>{seoTitle}</title>
+      <meta name="description" content={seoDesc} />
+      <meta property="og:title" content={seoTitle} />
+      <meta property="og:description" content={seoDesc} />
+      <meta property="og:type" content="website" />
+      <link rel="canonical" href={window.location.origin + window.location.pathname} />
+    </Helmet>
+  );
+
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
-      </div>
+      <>
+        {helmet}
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
+        </div>
+      </>
     );
   }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {helmet}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-4">Latest Deals & Offers</h1>
         
@@ -166,6 +202,7 @@ export const Deals = () => {
                 src={deal.imageUrl || 'https://via.placeholder.com/300x200'}
                 alt={deal.title}
                 className="w-full h-48 object-cover"
+                loading="lazy"
               />
               <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded text-sm font-semibold">
                 {formatDiscount(deal)}
@@ -183,7 +220,7 @@ export const Deals = () => {
               <p className="text-gray-600 text-sm mb-3 line-clamp-2">{deal.description}</p>
               
               {/* Coupon Code Display */}
-              {deal.couponCode && (
+              {deal.couponCode && deal.couponCode.trim() !== '' && (
                 <div className="bg-gray-50 border border-gray-200 rounded p-2 mb-3">
                   <div className="text-xs text-gray-500 mb-1">Coupon Code:</div>
                   <div className="font-mono font-bold text-green-600 text-center">{deal.couponCode}</div>

@@ -9,17 +9,17 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const { category, search, featured, page = 1, limit = 10 } = req.query;
-    
+
     let query = { isActive: true };
-    
+
     if (category) {
       query.category = category;
     }
-    
+
     if (featured === 'true') {
       query.featured = true;
     }
-    
+
     if (search) {
       query.$text = { $search: search };
     }
@@ -49,17 +49,17 @@ router.get('/', async (req, res) => {
 router.get('/admin/all', adminAuth, async (req, res) => {
   try {
     const { category, search, featured, page = 1, limit = 10 } = req.query;
-    
+
     let query = {};
-    
+
     if (category) {
       query.category = category;
     }
-    
+
     if (featured === 'true') {
       query.featured = true;
     }
-    
+
     if (search) {
       query.$text = { $search: search };
     }
@@ -103,7 +103,7 @@ router.get('/stats', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const deal = await Deal.findById(req.params.id);
-    
+
     if (!deal || !deal.isActive) {
       return res.status(404).json({ message: 'Deal not found' });
     }
@@ -111,6 +111,19 @@ router.get('/:id', async (req, res) => {
     // Increment click count
     deal.clickCount += 1;
     await deal.save();
+
+    // Log the deal_view event historically
+    try {
+      const Analytics = require('../models/Analytics');
+      await Analytics.create({
+        eventType: 'deal_view',
+        path: `/deals/${deal._id}`,
+        dealId: deal._id,
+        dealTitle: deal.title
+      });
+    } catch (analyticsError) {
+      console.error('Failed to log analytics event:', analyticsError);
+    }
 
     res.json(deal);
   } catch (error) {
@@ -123,7 +136,15 @@ router.post('/', adminAuth, [
   body('title').notEmpty().withMessage('Title is required'),
   body('description').notEmpty().withMessage('Description is required'),
   body('blogContent').notEmpty().withMessage('Blog content is required'),
-  body('category').isIn(['shopping', 'food', 'travel', 'entertainment', 'electronics', 'fashion', 'health', 'other']),
+  body('category').custom(async (value) => {
+    const Category = require('../models/Category');
+    const cleanName = value.trim().toLowerCase();
+    const exists = await Category.findOne({ name: cleanName });
+    if (!exists) {
+      throw new Error('Invalid category selected');
+    }
+    return true;
+  }),
   body('store.name').notEmpty().withMessage('Store name is required'),
   body('discountType').isIn(['percentage', 'fixed', 'free-shipping', 'buy-one-get-one']),
   body('discountValue').custom((value, { req }) => {
@@ -138,7 +159,7 @@ router.post('/', adminAuth, [
     }
     return true;
   }),
-  body('couponCode').notEmpty().withMessage('Coupon code is required'),
+  body('couponCode').optional(),
   body('expiryDate').isISO8601().withMessage('Valid expiry date is required')
 ], async (req, res) => {
   try {
@@ -162,11 +183,19 @@ router.put('/:id', adminAuth, [
   body('title').optional().notEmpty().withMessage('Title cannot be empty'),
   body('description').optional().notEmpty().withMessage('Description cannot be empty'),
   body('blogContent').optional().notEmpty().withMessage('Blog content cannot be empty'),
-  body('category').optional().isIn(['shopping', 'food', 'travel', 'entertainment', 'electronics', 'fashion', 'health', 'other']),
+  body('category').optional().custom(async (value) => {
+    const Category = require('../models/Category');
+    const cleanName = value.trim().toLowerCase();
+    const exists = await Category.findOne({ name: cleanName });
+    if (!exists) {
+      throw new Error('Invalid category selected');
+    }
+    return true;
+  }),
   body('store.name').optional().notEmpty().withMessage('Store name cannot be empty'),
   body('discountType').optional().isIn(['percentage', 'fixed', 'free-shipping', 'buy-one-get-one']),
   body('discountValue').optional().isNumeric().withMessage('Discount value must be a number'),
-  body('couponCode').optional().notEmpty().withMessage('Coupon code cannot be empty'),
+  body('couponCode').optional(),
   body('expiryDate').optional().isISO8601().withMessage('Valid expiry date is required')
 ], async (req, res) => {
   try {
@@ -229,12 +258,12 @@ router.delete('/:id', adminAuth, async (req, res) => {
 // Get categories
 router.get('/categories/list', async (req, res) => {
   try {
-    const categories = await Deal.distinct('category');
+    const Category = require('../models/Category');
+    const categories = await Category.find().sort({ name: 1 });
     if (!categories || categories.length === 0) {
-      // Fallback to standard categories if the database is empty/has no deals
-      return res.json(['shopping', 'food', 'travel', 'entertainment', 'electronics', 'fashion', 'health', 'other']);
+      return res.json(['shopping', 'food', 'travel', 'entertainment', 'electronics', 'fashion', 'health', 'credit cards', 'upi apps', 'other']);
     }
-    res.json(categories);
+    res.json(categories.map(c => c.name));
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }

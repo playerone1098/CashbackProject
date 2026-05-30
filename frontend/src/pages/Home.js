@@ -1,22 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { Helmet } from 'react-helmet-async';
 
 export const Home = () => {
   const [featuredDeals, setFeaturedDeals] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [dealsResponse, categoriesResponse] = await Promise.all([
-          axios.get('/api/deals?featured=true&limit=6'),
-          axios.get('/api/deals/categories/list')
-        ]);
-        
+        const dealsResponse = await axios.get('/api/deals?featured=true&limit=6');
         setFeaturedDeals(dealsResponse.data.deals);
-        setCategories(categoriesResponse.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -43,16 +38,35 @@ export const Home = () => {
     return 'SPECIAL OFFER';
   };
 
+  const helmet = (
+    <Helmet>
+      <title>Cashback Deals, Rewards & Active Coupons | Cashback Platform</title>
+      <meta name="description" content="Discover the best cashback deals, credit card rewards, UPI app discounts, and verified coupon codes. Shop at your favorite stores and start saving today!" />
+      <meta property="og:title" content="Cashback Deals, Rewards & Active Coupons" />
+      <meta property="og:description" content="Discover the best cashback deals, credit card rewards, UPI app discounts, and verified coupon codes. Shop at your favorite stores and start saving today!" />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content="http://localhost:3000/" />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content="Cashback Deals, Rewards & Active Coupons" />
+      <meta name="twitter:description" content="Discover the best cashback deals, credit card rewards, UPI app discounts, and verified coupon codes." />
+      <link rel="canonical" href={window.location.origin + window.location.pathname} />
+    </Helmet>
+  );
+
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
-      </div>
+      <>
+        {helmet}
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
+        </div>
+      </>
     );
   }
 
   return (
     <>
+      {helmet}
       {/* Real-time Ticker Banner */}
       <div className="bg-purple-600 text-white py-3 overflow-hidden relative shadow-sm w-full -mt-8 mb-8">
         <div className="flex whitespace-nowrap animate-marquee">
@@ -84,23 +98,6 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* Categories */}
-      <section className="mb-12">
-        <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Shop by Category</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {categories.map((category) => (
-            <Link
-              key={category}
-              to={`/deals?category=${category}`}
-              className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow text-center"
-            >
-              <div className="text-2xl mb-2 capitalize">{category}</div>
-              <div className="text-gray-600 text-sm">View Deals</div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
       {/* Featured Deals */}
       <section className="mb-12">
         <div className="flex justify-between items-center mb-8">
@@ -118,6 +115,7 @@ export const Home = () => {
                   src={deal.imageUrl || 'https://via.placeholder.com/300x200'}
                   alt={deal.title}
                   className="w-full h-48 object-cover"
+                  loading="lazy"
                 />
                 <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded text-sm font-semibold">
                   {formatDiscount(deal)}

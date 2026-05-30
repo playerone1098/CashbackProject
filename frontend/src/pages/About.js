@@ -1,9 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 export const About = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <Helmet>
+        <title>About Us | Learn How We Help You Save | Cashback</title>
+        <meta name="description" content="Learn about our mission, vision, and core values. We bridge the gap between world-class brands and smart shoppers, delivering premium cashback and verified deals." />
+        <meta property="og:title" content="About Us - Cashback Platform" />
+        <meta property="og:description" content="Learn about our mission, vision, and core values. We deliver premium cashback and verified deals to help you save effortlessly." />
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href={window.location.origin + window.location.pathname} />
+      </Helmet>
       {/* Hero Section */}
       <section className="text-center py-16 cashback-gradient rounded-3xl text-white mb-16 shadow-xl relative overflow-hidden">
         <div className="absolute inset-0 bg-black opacity-10"></div>

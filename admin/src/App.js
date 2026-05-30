@@ -5,6 +5,8 @@ import { Dashboard } from './pages/Dashboard';
 import { Login } from './pages/Login';
 import { Deals } from './pages/Deals';
 import { DealForm } from './pages/DealForm';
+import { Categories } from './pages/Categories';
+import { Analytics } from './pages/Analytics';
 import { PrivateRoute } from './components/PrivateRoute';
 
 function App() {
@@ -37,6 +39,20 @@ function App() {
           <PrivateRoute>
             <Layout>
               <DealForm />
+            </Layout>
+          </PrivateRoute>
+        } />
+        <Route path="/categories" element={
+          <PrivateRoute>
+            <Layout>
+              <Categories />
+            </Layout>
+          </PrivateRoute>
+        } />
+        <Route path="/analytics" element={
+          <PrivateRoute>
+            <Layout>
+              <Analytics />
             </Layout>
           </PrivateRoute>
         } />

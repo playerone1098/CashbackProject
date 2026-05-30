@@ -27,7 +27,20 @@ mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('MongoDB connected'))
+.then(async () => {
+  console.log('MongoDB connected');
+  try {
+    const Category = require('./models/Category');
+    const count = await Category.countDocuments();
+    if (count === 0) {
+      const defaults = ['shopping', 'food', 'travel', 'entertainment', 'electronics', 'fashion', 'health', 'credit cards', 'upi apps', 'other'];
+      await Category.insertMany(defaults.map(name => ({ name })));
+      console.log('Default categories seeded successfully!');
+    }
+  } catch (err) {
+    console.error('Error seeding default categories:', err);
+  }
+})
 .catch(err => console.error('MongoDB connection error:', err));
 
 // Status endpoint
@@ -47,8 +60,11 @@ app.get('/api/status', (req, res) => {
 });
 
 // Routes
+app.use('/sitemap.xml', require('./routes/sitemap'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/deals', require('./routes/deals'));
+app.use('/api/categories', require('./routes/categories'));
+app.use('/api/analytics', require('./routes/analytics'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

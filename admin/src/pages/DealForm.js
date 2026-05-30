@@ -34,6 +34,7 @@ export const DealForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     if (isEditing) {
@@ -72,6 +73,24 @@ export const DealForm = () => {
       fetchDeal();
     }
   }, [id, isEditing]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await api.get('/deals/categories/list');
+        setCategories(response.data);
+        if (!isEditing && response.data.length > 0) {
+          setFormData(prev => ({
+            ...prev,
+            category: response.data.includes('shopping') ? 'shopping' : response.data[0]
+          }));
+        }
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+      }
+    };
+    fetchCategories();
+  }, [isEditing]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -209,16 +228,13 @@ export const DealForm = () => {
                   name="category"
                   value={formData.category}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 capitalize"
                 >
-                  <option value="shopping">Shopping</option>
-                  <option value="food">Food</option>
-                  <option value="travel">Travel</option>
-                  <option value="entertainment">Entertainment</option>
-                  <option value="electronics">Electronics</option>
-                  <option value="fashion">Fashion</option>
-                  <option value="health">Health</option>
-                  <option value="other">Other</option>
+                  {categories.map(cat => (
+                    <option key={cat} value={cat} className="capitalize">
+                      {cat}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -296,7 +312,7 @@ export const DealForm = () => {
 
               <div>
                 <label className="block text-gray-700 text-sm font-bold mb-2">
-                  Coupon Code *
+                  Coupon Code (Optional)
                 </label>
                 <input
                   type="text"
@@ -305,7 +321,6 @@ export const DealForm = () => {
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                   placeholder="e.g., SAVE20"
-                  required
                 />
               </div>
             </div>

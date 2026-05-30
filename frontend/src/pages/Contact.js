@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 
 export const Contact = () => {
   const [formData, setFormData] = useState({
@@ -30,6 +31,14 @@ export const Contact = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <Helmet>
+        <title>Contact Us | Get Help & Support | Cashback</title>
+        <meta name="description" content="Have questions about our cashback offers, coupon codes, or partnership opportunities? Contact our savings support team and we will respond within 24 hours." />
+        <meta property="og:title" content="Contact Us - Support Team" />
+        <meta property="og:description" content="Have questions about our cashback offers or coupon codes? Contact our savings support team." />
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href={window.location.origin + window.location.pathname} />
+      </Helmet>
       {/* Page Title */}
       <div className="text-center mb-12">
         <h1 className="text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">

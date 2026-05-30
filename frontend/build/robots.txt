@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Allow: /deals
+Allow: /about
+Allow: /faq
+Allow: /contact
+
+# Block crawler access to administrative and auth routes
+Disallow: /admin/
+Disallow: /login
+Disallow: /register
+
+# Reference dynamic sitemap served from host root
+Sitemap: http://localhost:5000/sitemap.xml
