@@ -43,6 +43,11 @@ mongoose.connect(process.env.MONGODB_URI, {
 })
 .catch(err => console.error('MongoDB connection error:', err));
 
+// Health check endpoint for container orchestrators (e.g. Railway)
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
 // Status endpoint
 app.get('/api/status', (req, res) => {
   const dbState = mongoose.connection.readyState;
@@ -58,6 +63,7 @@ app.get('/api/status', (req, res) => {
     frontend: 'Running'
   });
 });
+
 
 // Routes
 app.use('/sitemap.xml', require('./routes/sitemap'));
