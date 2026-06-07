@@ -47,7 +47,7 @@ export const Login = () => {
       setError(
         data.message ||
         data.errors?.[0]?.msg ||
-        'Invalid credentials. Use admin@cashback.com / admin123'
+        'Invalid credentials.'
       );
     } finally {
       setLoading(false);
@@ -76,7 +76,7 @@ export const Login = () => {
               value={formData.email}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-              placeholder="admin@cashback.com"
+              placeholder="Enter your email"
               required
             />
           </div>
@@ -91,7 +91,7 @@ export const Login = () => {
               value={formData.password}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-              placeholder="admin123"
+              placeholder="Enter your password"
               required
             />
           </div>
@@ -104,14 +104,6 @@ export const Login = () => {
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
-
-        <div className="text-center mt-6">
-          <p className="text-gray-600 text-sm">
-            <strong>Admin credentials:</strong><br/>
-            Email: admin@cashback.com<br/>
-            Password: admin123
-          </p>
-        </div>
       </div>
     </div>
   );
