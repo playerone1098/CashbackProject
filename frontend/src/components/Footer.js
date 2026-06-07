@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { VERSION } from '../version';
 
 export const Footer = () => {
   return (
@@ -34,6 +35,12 @@ export const Footer = () => {
               <li><Link to="/deals?category=upi apps" className="text-gray-300 hover:text-white">UPI & Wallet Apps</Link></li>
             </ul>
           </div>
+        </div>
+        
+        {/* Footer Bottom copyright and version */}
+        <div className="mt-8 pt-8 border-t border-gray-700 flex flex-col sm:flex-row justify-between items-center text-sm text-gray-400">
+          <p>&copy; {new Date().getFullYear()} Cashback Rewards. All rights reserved.</p>
+          <p className="mt-2 sm:mt-0 text-xs text-gray-500">v{VERSION}</p>
         </div>
       </div>
     </footer>

@@ -22,7 +22,7 @@ export const FAQ = () => {
     {
       category: 'rewards',
       question: 'When will I receive my cashback payout?',
-      answer: 'Typically, merchants verify purchases within 30 to 60 days to account for return windows and trial periods. Once verified, payouts are processed at the beginning of each calendar month. You can withdraw your balance via PayPal or Direct Deposit once you reach a minimum threshold of $15.'
+      answer: 'Typically, merchants verify purchases within 30 to 60 days to account for return windows and trial periods. Once verified, payouts are processed at the beginning of each calendar month. You can withdraw your balance via Bank Transfer (UPI/NEFT) once you reach a minimum threshold of ₹250.'
     },
     {
       category: 'coupons',

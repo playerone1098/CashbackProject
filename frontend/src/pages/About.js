@@ -55,7 +55,7 @@ export const About = () => {
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Vision</h2>
           <p className="text-gray-600 leading-relaxed">
-            A world where no online purchase is made without rewards. We envision a future where retail partnerships and innovative technology empower consumers globally to get maximum value from every dollar spent.
+            A world where no online purchase is made without rewards. We envision a future where retail partnerships and innovative technology empower consumers globally to get maximum value from every rupee spent.
           </p>
         </div>
       </section>
@@ -110,7 +110,7 @@ export const About = () => {
             <div className="text-gray-300 font-medium">Coupon Accuracy</div>
           </div>
           <div>
-            <div className="text-4xl font-extrabold text-green-400 mb-2">$5M+</div>
+            <div className="text-4xl font-extrabold text-green-400 mb-2">₹5Cr+</div>
             <div className="text-gray-300 font-medium">Saved by Users</div>
           </div>
           <div>

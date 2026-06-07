@@ -28,7 +28,7 @@ export const DealDetail = () => {
       return `${deal.discountValue}% OFF`;
     }
     if (deal.discountType === 'fixed') {
-      return `$${deal.discountValue} OFF`;
+      return `₹${deal.discountValue} OFF`;
     }
     if (deal.discountType === 'free-shipping') {
       return 'FREE SHIPPING';
@@ -96,7 +96,7 @@ export const DealDetail = () => {
     "keywords": keywordsStr,
     "offers": {
       "@type": "Offer",
-      "priceCurrency": "USD",
+      "priceCurrency": "INR",
       "price": deal.discountedPrice,
       "priceValidUntil": deal.expiryDate ? deal.expiryDate.split('T')[0] : undefined,
       "availability": "https://schema.org/InStock",
@@ -160,60 +160,12 @@ export const DealDetail = () => {
                 </a>
               )}
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">{deal.title}</h1>
-            <p className="text-gray-600 text-lg leading-relaxed">{deal.description}</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Deal Details</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Original Price:</span>
-                  <span className="text-gray-400 line-through">${deal.originalPrice}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Discounted Price:</span>
-                  <span className="text-xl font-bold text-gray-900">${deal.discountedPrice}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">You Save:</span>
-                  <span className="text-green-600 font-semibold">
-                    ${deal.originalPrice - deal.discountedPrice}
-                  </span>
-                </div>
-                 <div className="flex justify-between">
-                  <span className="text-gray-600">Discount:</span>
-                  <span className="text-purple-600 font-semibold">{formatDiscount(deal)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Category:</span>
-                  <span className="capitalize">{deal.category}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Expires:</span>
-                  <span>{new Date(deal.expiryDate).toLocaleDateString()}</span>
-                </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-6">{deal.title}</h1>
+            {deal.blogContent && (
+              <div className="text-gray-700 text-lg leading-relaxed whitespace-pre-line">
+                {deal.blogContent}
               </div>
-            </div>
-
-             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">How to Save</h3>
-              <ol className="space-y-2 text-gray-600">
-                <li className="flex">
-                  <span className="font-semibold mr-2">1.</span>
-                  Copy the coupon code listed below (if available)
-                </li>
-                <li className="flex">
-                  <span className="font-semibold mr-2">2.</span>
-                  Click "Visit Store" to open the store's website
-                </li>
-                <li className="flex">
-                  <span className="font-semibold mr-2">3.</span>
-                  Apply the copied coupon code at checkout to enjoy your discount
-                </li>
-              </ol>
-            </div>
+            )}
           </div>
 
           {deal.terms && (

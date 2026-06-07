@@ -27,7 +27,7 @@ export const Home = () => {
       return `${deal.discountValue}% OFF`;
     }
     if (deal.discountType === 'fixed') {
-      return `$${deal.discountValue} OFF`;
+      return `₹${deal.discountValue} OFF`;
     }
     if (deal.discountType === 'free-shipping') {
       return 'FREE SHIPPING';
@@ -129,11 +129,11 @@ export const Home = () => {
                 
                 <div className="flex justify-between items-center mb-3">
                   <div>
-                    <span className="text-gray-400 line-through text-sm">${deal.originalPrice}</span>
-                    <span className="text-xl font-bold text-gray-900 ml-2">${deal.discountedPrice}</span>
+                    <span className="text-gray-400 line-through text-sm">₹{deal.originalPrice}</span>
+                    <span className="text-xl font-bold text-gray-900 ml-2">₹{deal.discountedPrice}</span>
                   </div>
                   <div className="text-green-600 font-semibold">
-                    Save ${deal.originalPrice - deal.discountedPrice}
+                    Save ₹{deal.originalPrice - deal.discountedPrice}
                   </div>
                 </div>
                 
