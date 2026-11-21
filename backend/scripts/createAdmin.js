@@ -1,15 +1,11 @@
-const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const postgresDb = require('../db/postgres');
 const User = require('../models/User');
 require('dotenv').config();
 
 const createAdmin = async () => {
   try {
-    // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await postgresDb.connectPostgres();
 
     let admin = await User.findOne({ email: 'admin@cashback.com' });
 
@@ -17,7 +13,7 @@ const createAdmin = async () => {
       admin.password = 'admin123';
       admin.role = 'admin';
       await admin.save();
-      console.log('Admin user already existed — password reset to admin123');
+      console.log('Admin user already existed - password updated to admin123');
     } else {
       admin = new User({
         username: 'admin',
@@ -32,14 +28,19 @@ const createAdmin = async () => {
       await admin.save();
       console.log('Admin user created successfully!');
     }
+
+    console.log('=== ADMIN CREDENTIALS ===');
     console.log('Email: admin@cashback.com');
     console.log('Password: admin123');
-    console.log('Please change the password after first login.');
+    console.log('Role: admin');
 
   } catch (error) {
     console.error('Error creating admin:', error);
   } finally {
-    mongoose.connection.close();
+    if (postgresDb.getPool()) {
+      await postgresDb.getPool().end();
+    }
+    process.exit(0);
   }
 };
 

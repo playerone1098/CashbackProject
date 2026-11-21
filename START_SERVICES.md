@@ -1,138 +1,99 @@
 # Services Startup Guide
 
-## Current Status ✅
-- **Backend:** Running (port 5000) - Connected to MongoDB Atlas
-- **Frontend:** Running (port 3000) - Blog-style deals website
-- **Admin Panel:** Running (port 3003) - Deal management interface
-- **Database:** Connected to MongoDB Atlas
+## Overview
+This platform consists of three main components:
+- **Backend API:** Node.js / Express REST API (port 5000)
+  - **Always PostgreSQL:** The database layer is 100% PostgreSQL.
+  - **Zero Setup / Completely Offline:** Automatically spins up a local PostgreSQL database with seeded mock data — **no external database installation or daemon required**!
+  - **External PostgreSQL Support:** Automatically connects to an external or cloud PostgreSQL database whenever `DATABASE_URL` (or `PG*` variables) is provided in `.env`.
+  - **No boolean flags:** No `NO_DB` or toggles needed.
+- **Frontend:** React blog-style cashback deals website (port 3000)
+- **Admin Panel:** React administrative dashboard (port 3003)
 
-## How to Start All Services
+---
 
-### Option 1: Start All Services (Recommended)
+## Quick Start (Zero Setup / Completely Offline Mode)
+
+You can run the entire platform locally without setting up or installing any external database!
+
+### 1. Install Dependencies
 ```bash
-# Navigate to project root
-cd /Users/playerone/Desktop/CashbackProject
+# Backend
+cd backend
+npm install
 
-# Start Backend (Terminal 1)
-cd backend && npm run dev &
+# Frontend
+cd ../frontend
+npm install
 
-# Start Frontend (Terminal 2)  
-cd frontend && npm start &
-
-# Start Admin Panel (Terminal 3)
-cd admin && npm start &
-
-# Or start all in background
-npm run start:all
+# Admin
+cd ../admin
+npm install
 ```
 
-### Option 2: Start Services Individually
+### 2. Start Services
 
-#### Backend Server
-```bash
-cd /Users/playerone/Desktop/CashbackProject/backend
-npm run dev
-```
-**Output:** `Server running on port 5000` + `MongoDB connected`
+Open three terminal windows:
 
-#### Frontend (Blog Website)
+#### Terminal 1 — Backend
 ```bash
-cd /Users/playerone/Desktop/CashbackProject/frontend
+cd backend
 npm start
 ```
-**Output:** `Starting development server...` + `Compiled successfully!`
+*Output: `Server running on port 5000` + `PostgreSQL database active in local offline mode with seeded mock data`*
 
-#### Admin Panel
+#### Terminal 2 — Frontend (User Web App)
 ```bash
-cd /Users/playerone/Desktop/CashbackProject/admin
+cd frontend
 npm start
 ```
-**Output:** `Starting development server...` + `Compiled successfully!`
+*Accessible at: http://localhost:3000*
 
-### Option 3: Check Running Services
+#### Terminal 3 — Admin Panel
 ```bash
-# Check if services are running
-ps aux | grep -E "(node|mongod)" | grep -v grep
-
-# Check specific ports
-lsof -i :5000  # Backend
-lsof -i :3000  # Frontend  
-lsof -i :3003  # Admin Panel
+cd admin
+npm start
 ```
+*Accessible at: http://localhost:3003*
 
-### Option 4: Stop All Services
-```bash
-# Stop all Node.js processes
-pkill -f "node"
+---
 
-# Or stop specific services by port
-kill -9 $(lsof -t -i :5000)  # Backend
-kill -9 $(lsof -t -i :3000)  # Frontend
-kill -9 $(lsof -t -i :3003)  # Admin Panel
-```
+## Admin Credentials
 
-### Access URLs
-- **Frontend (Blog):** http://localhost:3000
+Default credentials:
+- **Email:** `admin@cashback.com`
+- **Password:** `admin123`
+
+---
+
+## Access URLs
+- **Frontend (Website):** http://localhost:3000
 - **Admin Panel:** http://localhost:3003
 - **Backend API:** http://localhost:5000
+- **API Status:** http://localhost:5000/api/status
+- **Health Check:** http://localhost:5000/health
+- **Sitemap:** http://localhost:5000/sitemap.xml
 
-### Troubleshooting
+---
 
-#### If Port Already in Use:
+## Environment Variables (`backend/.env`)
+
 ```bash
-# Find process using the port
-lsof -i :3000
-
-# Kill the process
-kill -9 <PID>
-
-# Or use different port
-PORT=3001 npm start
-```
-
-#### If MongoDB Connection Fails:
-```bash
-# Check backend logs
-cd backend && npm run dev
-
-# Check .env file
-cat .env
-
-# Restart backend after fixing .env
-npm run dev
-```
-
-#### If Frontend Build Fails:
-```bash
-# Clear cache and reinstall
-cd frontend
-rm -rf node_modules package-lock.json
-npm install
-npm start
-```
-
-### Development Workflow
-1. **Start backend** → Connects to MongoDB Atlas
-2. **Start frontend** → Connects to backend API
-3. **Start admin panel** → Manage deals, users
-4. **Open browser** → http://localhost:3000 (frontend) or http://localhost:3003 (admin)
-
-### Package.json Scripts (if needed)
-Add to each `package.json`:
-```json
-{
-  "scripts": {
-    "start:all": "concurrently \"npm run dev\" \"npm run start\" \"npm run start:admin\"",
-    "start:admin": "cd admin && npm start"
-  }
-}
-```
-
-### Environment Variables
-Make sure `.env` file in `/backend/` contains:
-```
-MONGODB_URI=mongodb+srv://ashok:ashok123@cluster0.7is3dvd.mongodb.net/?appName=Cluster0
-JWT_SECRET=your_jwt_secret_key_here_change_this_in_production
-NODE_ENV=development
 PORT=5000
+JWT_SECRET=cashback_local_jwt_secret_dev_key
+NODE_ENV=development
+
+# Optional: To connect to an external PostgreSQL server, add:
+# DATABASE_URL=postgresql://postgres:postgres@localhost:5432/cashback
+```
+See [POSTGRES_SETUP.md](file:///c:/Users/Ashok%20Choudhary/Documents/GitHub/CashbackProject/POSTGRES_SETUP.md) for full details.
+
+---
+
+## Stopping Services
+- Use `Ctrl + C` in each terminal window, or on Linux/macOS:
+```bash
+kill -9 $(lsof -t -i :5000)  # Backend
+kill -9 $(lsof -t -i :3000)  # Frontend
+kill -9 $(lsof -t -i :3003)  # Admin
 ```

@@ -1,54 +1,75 @@
 # Cashback Deals and Rewards Platform
 
-A comprehensive MERN stack application for managing cashback deals and rewards with separate admin panel.
+A comprehensive application for managing cashback deals and rewards with a public frontend website, a dedicated admin panel, and an Express REST API backend powered by **PostgreSQL**.
 
 ## Project Structure
 
 ```
 CashbackProject/
-├── backend/          # Node.js/Express API server
-├── frontend/         # React user interface
-├── admin/            # React admin panel
+├── backend/          # Node.js/Express API server (always uses PostgreSQL)
+├── frontend/         # React user interface (deals, categories, blog)
+├── admin/            # React admin panel (deals management, analytics)
+├── POSTGRES_SETUP.md # Guide for running with PostgreSQL locally or in cloud
 └── README.md
 ```
 
 ## Tech Stack
 
-- **Frontend**: React, Tailwind CSS, Axios
-- **Backend**: Node.js, Express.js, MongoDB
-- **Admin Panel**: React, Tailwind CSS
-- **Database**: MongoDB
-- **Authentication**: JWT
-
-## Features
-
-### User Frontend
-- User registration and login
-- Browse cashback deals
-- View personal rewards and earnings
-- Deal categories and search
-- User dashboard
-
-### Admin Panel
-- Manage deals and offers
-- User management
-- Analytics and reporting
-- Reward distribution
-
-### Backend API
-- RESTful API endpoints
-- JWT authentication
-- CRUD operations for deals and users
-- Reward calculation logic
+- **Frontend**: React 18, React Router v6, Tailwind CSS, Axios
+- **Admin Panel**: React 18, Recharts, Tailwind CSS, Axios
+- **Backend API**: Node.js, Express.js, `pg` (node-postgres), `pg-mem`, JWT, Helmet, Express Rate Limit
+- **Database**:
+  - **Always PostgreSQL**: Runs completely offline out of the box using a local PostgreSQL database with seeded mock data.
+  - Automatically connects to an external PostgreSQL server when `DATABASE_URL` or `PG*` variables are configured.
+  - No boolean configuration flags needed!
 
 ## Getting Started
 
-1. Install dependencies in each folder
-2. Set up MongoDB database
-3. Configure environment variables
-4. Start backend server
-5. Start frontend and admin applications
+### 1. Install Dependencies
+```bash
+cd backend && npm install
+cd ../frontend && npm install
+cd ../admin && npm install
+```
 
-## Environment Variables
+### 2. Start Services (Runs Completely Offline with Mock Data!)
 
-Create `.env` files in backend and frontend folders with required configurations.
+In three separate terminals:
+
+```bash
+# Terminal 1: Backend API (runs on port 5000)
+cd backend
+npm start
+
+# Terminal 2: Frontend Web App (runs on port 3000)
+cd frontend
+npm start
+
+# Terminal 3: Admin Web App (runs on port 3003)
+cd admin
+npm start
+```
+
+### 3. Admin Access
+- **URL:** http://localhost:3003
+- **Email:** `admin@cashback.com`
+- **Password:** `admin123`
+
+## Connecting to an External PostgreSQL Database (Optional)
+
+To point to an external or cloud PostgreSQL instance:
+1. Provide `DATABASE_URL` in `backend/.env`:
+   ```bash
+   DATABASE_URL=postgresql://postgres:postgres@localhost:5432/cashback
+   ```
+2. Start the backend (`npm start`). Tables and mock data will be initialized automatically if the database is empty!
+3. See [POSTGRES_SETUP.md](file:///c:/Users/Ashok%20Choudhary/Documents/GitHub/CashbackProject/POSTGRES_SETUP.md) for further configuration options.
+
+## Testing
+
+Run backend tests:
+```bash
+cd backend
+npm test
+```
+All unit and integration tests run directly on PostgreSQL.

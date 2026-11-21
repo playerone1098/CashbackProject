@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const postgresDb = require('../db/postgres');
 const Deal = require('../models/Deal');
 require('dotenv').config();
 
@@ -112,7 +112,7 @@ const sampleDeals = [
     imageUrl: "https://images.unsplash.com/photo-1598257006458-087169a1f08d?auto=format&fit=crop&w=600&q=80",
     affiliateLink: "https://pay.google.com",
     couponCode: "GPAY21",
-    expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+    expiryDate: new Date('2028-12-31'),
     terms: "Valid for first-time GPay UPI users only. Minimum transaction of ₹1 required.",
     isActive: true,
     featured: false,
@@ -135,7 +135,7 @@ const sampleDeals = [
     imageUrl: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=600&q=80",
     affiliateLink: "https://www.cred.club",
     couponCode: "CREDPAY250",
-    expiryDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days from now
+    expiryDate: new Date('2028-12-31'),
     terms: "Valid on first credit bill or utility payment via CRED UPI. Min transaction ₹1000.",
     isActive: true,
     featured: true,
@@ -158,62 +158,16 @@ const sampleDeals = [
     imageUrl: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=80",
     affiliateLink: "https://www.amazon.in",
     couponCode: "AMZNFASH10",
-    expiryDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
+    expiryDate: new Date('2028-12-31'),
     terms: "Capped at ₹200 cashback. Credited as Amazon Pay balance within 24 hours.",
     isActive: true,
     featured: false,
     tags: ["amazon", "fashion", "shopping", "beauty", "wallet"]
   },
   {
-    title: "Zomato Dineout - Up to 40% Off + 10% Extra Cashback",
-    description: "Book restaurant tables via Zomato Dineout and get up to 40% discount plus extra bank cashback.",
-    blogContent: "Dine out like royalty and save big! Book your tables at thousands of premium partner restaurants using Zomato Dineout. Pay your restaurant bills through Zomato Pay and enjoy up to 40% instant discount. Plus, pay using select credit cards (like HSBC or HDFC) to get an extra 10% cashback on your payments. Feast more, pay less!",
-    category: "food",
-    store: {
-      name: "Zomato",
-      logo: "https://logo.clearbit.com/zomato.com",
-      website: "https://www.zomato.com"
-    },
-    discountType: "percentage",
-    discountValue: 40,
-    originalPrice: 1000,
-    discountedPrice: 600,
-    imageUrl: "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=600&q=80",
-    affiliateLink: "https://www.zomato.com",
-    couponCode: "ZOMATOPAY",
-    expiryDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000),
-    terms: "Valid only on paying via Zomato Pay at select partner restaurants.",
-    isActive: true,
-    featured: true,
-    tags: ["zomato", "dineout", "food", "dining", "discount"]
-  },
-  {
-    title: "MakeMyTrip Flights - Flat ₹1,500 Off on Domestic Flights",
-    description: "Book domestic flight tickets and save flat ₹1,500 using select credit cards or UPI apps.",
-    blogContent: "Planning your next vacation or a trip back home? Book your domestic flight tickets on MakeMyTrip and save a flat ₹1,500 on a minimum transaction value of ₹5,000. This offer is valid on both one-way and round-trip flight bookings across all major domestic airlines. Enter the coupon code at the payment page to claim your discount.",
-    category: "travel",
-    store: {
-      name: "MakeMyTrip",
-      logo: "https://logo.clearbit.com/makemytrip.com",
-      website: "https://www.makemytrip.com"
-    },
-    discountType: "fixed",
-    discountValue: 1500,
-    originalPrice: 6000,
-    discountedPrice: 4500,
-    imageUrl: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=600&q=80",
-    affiliateLink: "https://www.makemytrip.com",
-    couponCode: "MMTFLIGHT",
-    expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-    terms: "Min booking amount ₹5,000. Once per user during the sale period.",
-    isActive: true,
-    featured: false,
-    tags: ["mmt", "makemytrip", "flight", "travel", "discount"]
-  },
-  {
-    title: "OneCard Credit Card - Metal Card with 5x Rewards & No Joining Fee",
-    description: "Apply for OneCard, get a premium metal card with 5x reward points on your top spending categories.",
-    blogContent: "Experience the future of credit cards with OneCard. It is a premium metal credit card that comes with zero joining and zero annual fees. Manage your card seamlessly via the interactive OneCard app. Earn 5x reward points on your top two spending categories each month. Points are credited instantly and can be redeemed directly as statement cash.",
+    title: "OneCard Metal Credit Card - 5X Rewards on Top Categories",
+    description: "Lifetime free metal credit card with instant reward redemption and seamless app control.",
+    blogContent: "Experience India's slickest metal credit card! OneCard offers 5X reward points on your top 2 spending categories each month automatically. There is no joining fee and no annual fee. Points never expire and can be redeemed for cash directly into your card statement balance with zero redemption charges.",
     category: "credit cards",
     store: {
       name: "OneCard",
@@ -221,12 +175,12 @@ const sampleDeals = [
       website: "https://www.getonecard.app"
     },
     discountType: "percentage",
-    discountValue: 0,
+    discountValue: 5,
     originalPrice: 0,
     discountedPrice: 0,
-    imageUrl: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1556742049-0a67c5574f73?auto=format&fit=crop&w=600&q=80",
     affiliateLink: "https://www.getonecard.app",
-    couponCode: "ONECARDMETAL",
+    couponCode: "ONECARD5X",
     expiryDate: new Date('2028-12-31'),
     terms: "Lifetime free card. Subject to credit score checks. 5x rewards credited instantly.",
     isActive: true,
@@ -237,8 +191,8 @@ const sampleDeals = [
 
 async function createSampleDeals() {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log('Connected to MongoDB');
+    await postgresDb.connectPostgres();
+    console.log('Connected to PostgreSQL');
 
     // Clear existing deals
     await Deal.deleteMany({});
@@ -246,13 +200,16 @@ async function createSampleDeals() {
 
     // Insert sample deals
     const insertedDeals = await Deal.insertMany(sampleDeals);
-    console.log(`Created ${insertedDeals.length} sample deals`);
+    console.log(`Created ${insertedDeals.length} sample deals in PostgreSQL`);
 
     console.log('Sample deals created successfully!');
   } catch (error) {
     console.error('Error creating sample deals:', error);
   } finally {
-    await mongoose.disconnect();
+    if (postgresDb.getPool()) {
+      await postgresDb.getPool().end();
+    }
+    process.exit(0);
   }
 }
 
